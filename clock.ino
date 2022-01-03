@@ -1,15 +1,15 @@
-#include <iarduino_RTC.h>
+#include <iarduino_RTC.h> 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 
-#define STOPWATCH_START_STOP_BUTTON_PIN 4
-#define STOPWATCH_LED_PIN 13
+//#define STOPWATCH_START_STOP_BUTTON_PIN 4
+//#define STOPWATCH_LED_PIN 13
 
 
 enum {ON, PAUSE, OFF} STATE;
 
-iarduino_RTC time(RTC_DS1302,6,8,7);
+iarduino_RTC time(RTC_DS1302,6,8,7); //  DS1302 - RST, CLK, DAT nm                                                                                                                                                                                                                                                                                 
 LiquidCrystal_I2C LCD(0x27,16,2);
 
 
@@ -116,7 +116,7 @@ String Stopwatch::_getTotalTime(unsigned long int seconds) {
 
 void Stopwatch::_showStopMessage() {
   String totalTime = _getTotalTime(time.gettimeUnix() - _startTimeUnix);
-  String activeTime = _getTotalTime(time.gettimeUnix() - _lastTimeUnix + _activeTime);
+  String activeTime = _getTotalTime((time.gettimeUnix() - _lastTimeUnix) + _activeTime);
   
   LCD.clear();
   // stopwatch-end screan
@@ -130,7 +130,7 @@ void Stopwatch::_showStopMessage() {
   LCD.print("Start:  " + _startTimeString);
   LCD.setCursor(0, 1);
   LCD.print("End:    " + String(time.gettime("H:i:s")));
-  delay(4000);
+  delay(5000);
   LCD.clear();
 
   //  total time screan
@@ -138,22 +138,22 @@ void Stopwatch::_showStopMessage() {
   LCD.print("Total time:");
   LCD.setCursor(16 - totalTime.length(), 1);
   LCD.print(totalTime);
-  delay(4000);
+  delay(5000);
   LCD.clear();
 
   //  active time screan
   LCD.setCursor(0, 0);
   LCD.print("Active time:");
   LCD.setCursor(16 - activeTime.length(), 1);
-  LCD.print(totalTime);
-  delay(4000);
+  LCD.print(activeTime);
+  delay(5000);
   LCD.clear();
 }
 
 
 void Stopwatch::_stop() {
   _state = OFF;
-  _showStopMessage();
+  _showStopMessage( );
   digitalWrite(_ledPin, LOW);
 }
 
@@ -167,7 +167,7 @@ void Stopwatch::_readButtons() {
 
 void Stopwatch::_pause() {
   _state = PAUSE;
-  _activeTime += time.gettimeUnix() - _startTimeUnix;
+  _activeTime += time.gettimeUnix() - _lastTimeUnix;
   _showPauseMessage();
 }
 
@@ -178,7 +178,7 @@ void Stopwatch::_showPauseMessage(bool clear = true) {
   }
   LCD.setCursor(0, 0);
   LCD.print("Stopwatch: Pause");
-  delay(100);
+  delay(500);
 }
 
 
@@ -210,25 +210,25 @@ void Stopwatch::_showStatus() {
   LCD.print("Stopwatch:Status");
   LCD.setCursor(0, 1);
   LCD.print("Start:  " + _startTimeString);
-  delay(2000);
+  delay(5000);
 
 
   String totalTime = _getTotalTime(time.gettimeUnix() - _startTimeUnix);
-  String activeTime = _getTotalTime(time.gettimeUnix() - _lastTimeUnix + _activeTime);
+  String activeTime = _getTotalTime((time.gettimeUnix() - _lastTimeUnix) + _activeTime);
   
   LCD.clear();
   LCD.setCursor(0, 0);
   LCD.print("Total time:");
   LCD.setCursor(16 - totalTime.length(), 1);
   LCD.print(totalTime);
-  delay(2000);
+  delay(5000);
 
   LCD.clear();
   LCD.setCursor(0, 0);
   LCD.print("Active time:");
   LCD.setCursor(16 - activeTime.length(), 1);
   LCD.print(activeTime);
-  delay(2000);
+  delay(5000);
   LCD.clear();
 }
 
