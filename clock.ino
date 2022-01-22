@@ -2,21 +2,25 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+#define RED 9
+#define GREEN 10
+#define BLUE 11
 
-//#define STOPWATCH_START_STOP_BUTTON_PIN 4
-//#define STOPWATCH_LED_PIN 13
-
+#define BUTTON_1 A0
+#define BUTTON_2 A1
+#define BUTTON_3 A2
+#define BUTTON_4 A3
 
 enum {ON, PAUSE, OFF} STATE;
 
-iarduino_RTC time(RTC_DS1302,6,8,7); //  DS1302 - RST, CLK, DAT nm                                                                                                                                                                                                                                                                                 
+iarduino_RTC time(RTC_DS1302, 6, 7, 8); //  DS1302 - RST, CLK, DAT nm                                                                                                                                                                                                                                                                                 
 LiquidCrystal_I2C LCD(0x27,16,2);
 
 
 // Stopwatch: Start
 class Stopwatch {
   public:
-    Stopwatch(int startBtnPin, int pauseBtnPin, int showBtnPin, int ledPin = 13);
+    Stopwatch(int startBtnPin, int pauseBtnPin, int showBtnPin, int ledPin = RED);
     
     int state();
     void init();
@@ -25,7 +29,7 @@ class Stopwatch {
     
   private:
     // pins {
-    int _ledPin;
+    int _ledPin; 
     int _startBtnPin;
     int _pauseBtnPin;
     int _showBtnPin;
@@ -277,16 +281,15 @@ void Stopwatch::run() {
 }
 // Stopwatch: end
 
-Stopwatch stopwatch(4, 3, 5, 13);
+Stopwatch stopwatch(BUTTON_3, BUTTON_4, BUTTON_2, RED);
 
 void setup() {
-//  delay(300);
   LCD.init();
   LCD.backlight();
   time.begin();
   stopwatch.init(); 
-  //  Use this only first time to set time
-  //  time.settime(0, 5, 19, 30, 12, 21, 4 ); 
+  //  Use this only first time to set time, then after that upload code again but this time with commented string
+  //  time.settime(0, 27, 23, 17, 1, 22, 1); 
 }
 
 
