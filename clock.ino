@@ -114,6 +114,7 @@ class Stopwatch {
     bool _pauseBtnState;
     bool _showBtnState;
     unsigned long int _startTimeUnix;
+    unsigned long int _lastPauseTimeUnix;
     unsigned long int _lastTimeUnix;
     unsigned long int _activeTime = 0;
     String _startTimeString;
@@ -128,8 +129,8 @@ class Stopwatch {
     void _stop();
     void _showStopMessage();
     String _getTime(unsigned long int seconds);
-    String _getTotalTime(unsigned long now = time.gettimeUnix());
-    String _getActiveTime(unsigned long now = time.gettimeUnix());
+    String _getTotalTime(unsigned long now);
+    String _getActiveTime(unsigned long now);
     void _showStatus();
     void _printActiveTime(String _time);
     void _printTotalTime(String _time);
@@ -183,12 +184,18 @@ String Stopwatch::_getTime(unsigned long int seconds) {
   }
 }
 
-String Stopwatch::_getTotalTime(unsigned long now = time.gettimeUnix()) {
+String Stopwatch::_getTotalTime(unsigned long now) {
   return _getTime(now - _startTimeUnix);
 }
 
-String Stopwatch::_getActiveTime(unsigned long now = time.gettimeUnix()) {
-  return _getTime((now - _lastTimeUnix) + _activeTime);
+String Stopwatch::_getActiveTime(unsigned long now) {
+  if (_lastTimeUnix != _startTimeUnix && _state == PAUSE) {
+    return _getTime((now - _lastPauseTimeUnix) + _activeTime);
+  } else if (_lastTimeUnix == _startTimeUnix && _state == PAUSE) {
+    return _getTime(_lastPauseTimeUnix - _startTimeUnix); 
+  } else {
+    return _getTime((now - _lastTimeUnix) + _activeTime);
+  }
 }
 
 void Stopwatch::_printActiveTime(String _time) {
@@ -248,7 +255,9 @@ void Stopwatch::_readButtons() {
 void Stopwatch::_pause() {
   _state = PAUSE;
   rgb->yellow();
-  _activeTime += time.gettimeUnix() - _lastTimeUnix;
+  unsigned long now = time.gettimeUnix();
+  _activeTime += now - _lastTimeUnix;
+  _lastPauseTimeUnix = now;
   _showPauseMessage();
 }
 
