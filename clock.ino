@@ -164,6 +164,9 @@ void Stopwatch::_start() {
   _state = ON;
   _startTimeUnix = time.gettimeUnix();
   _lastTimeUnix = _startTimeUnix;
+  _startTimeUnix = _startTimeUnix;
+  _lastPauseTimeUnix = _startTimeUnix;
+  _activeTime = 0;
   _startTimeString = time.gettime("H:i:s");
 }
 
